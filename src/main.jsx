@@ -1,11 +1,12 @@
-import React from "react";
+import React    from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App";
+import App      from "./Components/tarefas/TarefasComponent.jsx";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Tarefas  from "./Components/tarefas/TarefasComponent.jsx";
 
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <App />
+    <Tarefas />
   </React.StrictMode>
 );
