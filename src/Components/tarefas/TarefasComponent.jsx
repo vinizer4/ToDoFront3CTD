@@ -79,10 +79,10 @@ function Tarefas() {
 		validateTitulo()
 		validData()
 	}
+	
 	async function addItem(event) {
 		event.preventDefault();
 		await validateFields()
-		console.log("addItem called");
 		if (
 			descricaoMessage === "" &&
 			tituloMessage === "" &&
@@ -90,7 +90,7 @@ function Tarefas() {
 			dataMessage === ""
 		) {
 			const randomNumber = Math.floor(Math.random() * 1000000);
-			const copyArray = [...listaTarefas]
+			const copyArray = [ ...listaTarefas ]
 			setListTarefas([
 				               ...copyArray,
 				               {
@@ -111,31 +111,40 @@ function Tarefas() {
 	
 	function handleSubmit(event) {
 		event.preventDefault();
-		console.log(event)
-		console.log("form submitted");
 		addItem(event);
 	}
 	
 	useEffect(() => {
-		console.log(listaTarefas)
-	}, [listaTarefas])
+	}, [ listaTarefas ])
 	
 	
 	async function editItem(event) {
 		event.preventDefault();
 		await validateFields();
-		if ( message.isValid ) {
-			const index = listaTarefas.findIndex((tarefa) => tarefa.id
-			                                                 === id);
+		if (
+			descricaoMessage === "" &&
+			tituloMessage === "" &&
+			categoriaMessage === "" &&
+			dataMessage === ""
+		) {
 			const copyListaTarefas = [ ...listaTarefas ];
-			copyListaTarefas[ index ] = {
-				...copyListaTarefas[ index ],
-				titulo,
-				categoria,
-				data,
-				descricao,
-			};
+			
+			const index = listaTarefas.findIndex((tarefa) => tarefa.id
+			                                                 === Number(
+					id));
+			
+			copyListaTarefas[ index ].descricao = descricao
+			copyListaTarefas[ index ].titulo = titulo
+			copyListaTarefas[ index ].categoria = categoria
+			copyListaTarefas[ index ].data = data
+			
 			setListTarefas(copyListaTarefas);
+			
+			setTitulo("");
+			setCategoria("");
+			setData("");
+			setId("");
+			setDescricao("");
 		}
 	}
 	
@@ -160,7 +169,7 @@ function Tarefas() {
 			<div className="App">
 				<h1>Cadastrar Tarefas</h1>
 				
-				<Form onSubmit={ handleSubmit }>
+				<Form onSubmit={ id ? editItem : handleSubmit }>
 					<Form.Group>
 						<Form.Control
 							onClick={ validateTitulo }
@@ -238,41 +247,52 @@ function Tarefas() {
 					</Button>
 				</Form>
 				<br/>
-				{listaTarefas.length > 0 ? (
+				{ listaTarefas.length > 0 ? (
 					<>
 						<h2>Minhas tarefas</h2>
-						{listaTarefas.map((item) => (
-							<React.Fragment key={item.id}>
+						{ listaTarefas.map((item) => (
+							<React.Fragment key={ item.id }>
 								<ListGroup>
-									<ListGroup.Item>
-										<h5>{item.titulo}</h5>
-										<Badge bg="secondary">{item.categoria}</Badge>{' '}
-										<span className="text-muted">{item.data}</span>
-									</ListGroup.Item>
-									<ListGroup.Item>{item.descricao}</ListGroup.Item>
-									<ListGroup.Item>
-										<Button
-											variant="danger"
-											onClick={() => apagarItem(item.id)}
-											className="me-2"
-										>
-											<BsTrash />
-										</Button>
-										<Button
-											variant="warning"
-											onClick={() => preencheEstados(item)}
-										>
-											<BsPencil />
-										</Button>
-									</ListGroup.Item>
+									{ listaTarefas.map((item) => (
+										<ListGroup.Item
+											key={ item.id }>
+											<div
+												className="d-flex justify-content-between">
+												<div>
+													<h5>{ item.titulo }</h5>
+													<Badge
+														bg="primary">{ item.categoria }</Badge>{ " " }
+													<Badge
+														bg="secondary">{ item.data }</Badge>
+												</div>
+												<div>
+													<Button
+														variant="warning"
+														onClick={ () => preencheEstados(
+															item) }
+													>
+														<BsPencil/>
+													</Button>{ " " }
+													<Button
+														variant="danger"
+														onClick={ () => apagarItem(
+															item.id) }
+													>
+														<BsTrash/>
+													</Button>
+												</div>
+											</div>
+											<p>{ item.descricao }</p>
+										</ListGroup.Item>
+									)) }
 								</ListGroup>
-								<br />
+								<br/>
 							</React.Fragment>
-						))}
+						)) }
 					</>
 				) : (
-					 <p>Nenhum item cadastrado</p>
-				 )}
+					  <p>Nenhum item cadastrado</p>
+				  ) }
 			</div>
 		</Container>
 	
